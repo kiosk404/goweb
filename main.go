@@ -7,13 +7,18 @@ package main
 
 import (
 	"goweb/framework"
+	"goweb/framework/middleware"
 	"net/http"
+	"time"
 )
 
 func main() {
 	core := framework.NewCore()
-	registerRouter(core)
 
+	core.Use(middleware.Timeout(1 * time.Second))
+	core.Use(middleware.Cost())
+
+	registerRouter(core)
 	server := http.Server{
 		Addr:              ":8080",
 		Handler:           core,

@@ -9,12 +9,14 @@ import (
 	"fmt"
 	"goweb/framework"
 	"net/http"
+	"time"
 )
 
 // 注册路由规则
 func registerRouter(core *framework.Core) {
 	// 静态路由+HTTP方法匹配
 	core.Get("/v1/hello", func(c *framework.Context) error {
+		time.Sleep(20 * time.Second)
 		return c.Text(http.StatusOK, "/v1/hello")
 	})
 

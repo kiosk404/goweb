@@ -21,10 +21,11 @@ type Context struct {
 	request        *http.Request
 	responseWriter http.ResponseWriter
 	ctx            context.Context
-	handler        ControllerHandler
+	handlers       []ControllerHandler
 
 	// 是否超时标记位
 	hasTimeout bool
+	index      int
 	// 写保护机制
 	writerMux *sync.Mutex
 }
@@ -36,6 +37,22 @@ func NewContext(r *http.Request, w http.ResponseWriter) *Context {
 		ctx:            r.Context(),
 		writerMux:      &sync.Mutex{},
 	}
+}
+
+// 为context设置handlers
+func (ctx *Context) SetHandlers(handlers []ControllerHandler) {
+	ctx.handlers = handlers
+}
+
+// 核心函数，调用context的下一个函数
+func (ctx *Context) Next() error {
+	ctx.index++
+	if ctx.index <= len(ctx.handlers) {
+		if err := ctx.handlers[ctx.index-1](ctx); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // #region base function
@@ -198,9 +215,6 @@ func (ctx *Context) BindJson(obj interface{}) error {
 // #region response
 
 func (ctx *Context) Json(status int, obj interface{}) error {
-	if ctx.HasTimeout() {
-		return nil
-	}
 	ctx.responseWriter.Header().Set("Content-Type", "application/json")
 	ctx.responseWriter.WriteHeader(status)
 	byt, err := json.Marshal(obj)

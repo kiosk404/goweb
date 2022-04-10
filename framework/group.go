@@ -8,8 +8,8 @@ package framework
 // IGroup 代表前缀分组
 type IGroup interface {
 	// 实现HttpMethod方法
-	Get(string, ControllerHandler)
-	Post(string, ControllerHandler)
+	Get(string, ...ControllerHandler)
+	Post(string, ...ControllerHandler)
 
 	// 实现嵌套group
 	Group(string) IGroup
@@ -32,15 +32,15 @@ func NewGroup(core *Core, prefix string) *Group {
 }
 
 // 实现Get方法
-func (g *Group) Get(uri string, handler ControllerHandler) {
+func (g *Group) Get(uri string, handler ...ControllerHandler) {
 	uri = g.getAbsolutePrefix() + uri
-	g.core.Get(uri, handler)
+	g.core.Get(uri, handler...)
 }
 
 // 实现Post方法
-func (g *Group) Post(uri string, handler ControllerHandler) {
+func (g *Group) Post(uri string, handler ...ControllerHandler) {
 	uri = g.getAbsolutePrefix() + uri
-	g.core.Post(uri, handler)
+	g.core.Post(uri, handler...)
 }
 
 // 获取当前group的绝对路径
