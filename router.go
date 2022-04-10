@@ -6,6 +6,7 @@
 package main
 
 import (
+	"fmt"
 	"goweb/framework"
 	"net/http"
 )
@@ -17,22 +18,22 @@ func registerRouter(core *framework.Core) {
 		return c.Text(http.StatusOK, "/v1/hello")
 	})
 
-	//// 批量通用前缀
-	//subjectApi := core.Group("/subject")
-	//{
-	//	// 动态路由
-	//	subjectApi.Get("/:id", func(c *framework.Context) error {
-	//		return c.Text(http.StatusOK, fmt.Sprintf("/subject/%d",1))
-	//	})
-	//	subjectApi.Get("/list/all", func(c *framework.Context) error {
-	//		return c.Text(http.StatusOK, fmt.Sprintf("/subject/all"))
-	//	})
-	//
-	//	subjectInnerApi := subjectApi.Group("/info")
-	//	{
-	//		subjectInnerApi.Get("/name", func (c *framework.Context) error {
-	//			return c.Text(http.StatusOK, fmt.Sprintf("/subject/info/name"))
-	//		})
-	//	}
-	//}
+	// 批量通用前缀
+	subjectApi := core.Group("/subject")
+	{
+		// 动态路由
+		subjectApi.Get("/:id", func(c *framework.Context) error {
+			return c.Text(http.StatusOK, fmt.Sprintf("/subject/%d",1))
+		})
+		subjectApi.Get("/list/all", func(c *framework.Context) error {
+			return c.Text(http.StatusOK, fmt.Sprintf("/subject/all"))
+		})
+
+		subjectInnerApi := subjectApi.Group("/info")
+		{
+			subjectInnerApi.Get("/name", func (c *framework.Context) error {
+				return c.Text(http.StatusOK, fmt.Sprintf("/subject/info/name"))
+			})
+		}
+	}
 }
